@@ -3,6 +3,7 @@ using FirstWeb.context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
+using FirstWeb.Service;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,9 +33,9 @@ builder.Services.AddCors(options =>{
 builder.Services.AddEndpointsApiExplorer();
 
 
-// builder.Services.AddSingleton<TokenService>();
+builder.Services.AddSingleton<TokenService>();
 
-// builder.Services.AddControllers();
+builder.Services.AddControllers();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {

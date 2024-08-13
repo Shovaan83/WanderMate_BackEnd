@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FirstWeb.context;
 using FirstWeb.Dtos.UserDTOs;
+using FirstWeb.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,10 +16,12 @@ namespace FirstWeb.Controller
     {
 
         private readonly ApplicationDbContext _context;
+        private readonly TokenService _tokenService;
 
-        public AuthController(ApplicationDbContext context)
+        public AuthController(ApplicationDbContext context, TokenService tokenService)
         {
             _context = context;
+            _tokenService = tokenService;
         }
         [HttpPost("SignIn")]
 
@@ -40,7 +43,9 @@ namespace FirstWeb.Controller
                     return BadRequest("Invalid Password");
                 }
 
-                return Ok("User signed in successfully");
+                var token = _tokenService.GenerateToken(user);
+
+                return Ok(new{Message= "Login Successful", token=token});
             }
             catch (Exception ex)
             {
