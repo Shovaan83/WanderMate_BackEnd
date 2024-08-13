@@ -7,6 +7,7 @@ using FirstWeb.Dtos;
 using FirstWeb.Dtos.UserDTOs;
 using FirstWeb.Migrations;
 using FirstWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client.Extensibility;
@@ -15,6 +16,7 @@ namespace FirstWeb.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")]
     public class UserController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -37,6 +39,7 @@ namespace FirstWeb.Controller
                     Id = users.Id,
                     Username = users.Username,
                     Email = users.Email,
+                    Role = users.Role,
                     Password = users.Password,
                 });
 
@@ -77,6 +80,7 @@ namespace FirstWeb.Controller
                 {
                     Username = userDto.Username,
                     Email = userDto.Email,
+                    Role = userDto.Role,
                     Password = HashedPassword,
                 };
                 _context.Users.Add(user);
