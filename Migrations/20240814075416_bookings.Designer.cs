@@ -4,6 +4,7 @@ using FirstWeb.context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FirstWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240814075416_bookings")]
+    partial class bookings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace FirstWeb.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("BookingTravelPackages", b =>
-                {
-                    b.Property<int>("BookingsBookingId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TravelPackagesId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BookingsBookingId", "TravelPackagesId");
-
-                    b.HasIndex("TravelPackagesId");
-
-                    b.ToTable("BookingTravelPackages");
-                });
 
             modelBuilder.Entity("FirstWeb.Models.Booking", b =>
                 {
@@ -153,9 +141,6 @@ namespace FirstWeb.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TravelPackagesId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
@@ -166,8 +151,6 @@ namespace FirstWeb.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("HotelId");
-
-                    b.HasIndex("TravelPackagesId");
 
                     b.HasIndex("UserId");
 
@@ -234,6 +217,9 @@ namespace FirstWeb.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("BookingId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -256,6 +242,8 @@ namespace FirstWeb.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BookingId");
 
                     b.ToTable("TravelPackages");
                 });
@@ -296,29 +284,14 @@ namespace FirstWeb.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("BookingTravelPackages", b =>
-                {
-                    b.HasOne("FirstWeb.Models.Booking", null)
-                        .WithMany()
-                        .HasForeignKey("BookingsBookingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FirstWeb.Models.TravelPackages", null)
-                        .WithMany()
-                        .HasForeignKey("TravelPackagesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("FirstWeb.Models.Booking", b =>
                 {
                     b.HasOne("FirstWeb.Models.Hotel", "Hotel")
-                        .WithMany("Bookings")
+                        .WithMany()
                         .HasForeignKey("HotelId");
 
                     b.HasOne("FirstWeb.Models.User", "User")
-                        .WithMany("Bookings")
+                        .WithMany()
                         .HasForeignKey("UserId");
 
                     b.Navigation("Hotel");
@@ -339,10 +312,6 @@ namespace FirstWeb.Migrations
                         .WithMany("Reviews")
                         .HasForeignKey("HotelId");
 
-                    b.HasOne("FirstWeb.Models.TravelPackages", null)
-                        .WithMany("Reviews")
-                        .HasForeignKey("TravelPackagesId");
-
                     b.HasOne("FirstWeb.Models.User", "User")
                         .WithMany("Reviews")
                         .HasForeignKey("UserId");
@@ -350,6 +319,13 @@ namespace FirstWeb.Migrations
                     b.Navigation("Hotel");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FirstWeb.Models.TravelPackages", b =>
+                {
+                    b.HasOne("FirstWeb.Models.Booking", null)
+                        .WithMany("TravelPackages")
+                        .HasForeignKey("BookingId");
                 });
 
             modelBuilder.Entity("FirstWeb.Models.User", b =>
@@ -363,25 +339,18 @@ namespace FirstWeb.Migrations
                 {
                     b.Navigation("Hotels");
 
+                    b.Navigation("TravelPackages");
+
                     b.Navigation("Users");
                 });
 
             modelBuilder.Entity("FirstWeb.Models.Hotel", b =>
-                {
-                    b.Navigation("Bookings");
-
-                    b.Navigation("Reviews");
-                });
-
-            modelBuilder.Entity("FirstWeb.Models.TravelPackages", b =>
                 {
                     b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("FirstWeb.Models.User", b =>
                 {
-                    b.Navigation("Bookings");
-
                     b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618

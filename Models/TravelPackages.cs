@@ -28,8 +28,8 @@ namespace FirstWeb.Models
 
         // public User? User { get; set; }
 
-        // public ICollection<Review> Reviews { get; set; } = new List<Review>();
+        public ICollection<Review> Reviews { get; set; } = new List<Review>();
 
-        // public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+        public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
     }
 }

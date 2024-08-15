@@ -35,7 +35,7 @@ namespace FirstWeb.Service
                 audience: _configuration["Jwt:Audience"],
                 claims: claims,
                 expires: DateTime.Now.AddMinutes(30),
-                signingCredentials: credentials);
+                signingCredentials: credentials);   
 
             var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
             return jwtToken;

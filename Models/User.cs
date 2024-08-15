@@ -28,7 +28,7 @@ namespace FirstWeb.Models
 
         public ICollection<Review> Reviews { get; set; } = new List<Review>();
 
-        // public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+        public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 
         // public ICollection<TravelPackages> TravelPackages { get; set; } = new List<TravelPackages>();
     }

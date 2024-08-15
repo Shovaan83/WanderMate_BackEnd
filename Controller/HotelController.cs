@@ -7,6 +7,7 @@ using FirstWeb.Dtos;
 using FirstWeb.Dtos.HotelDto;
 using FirstWeb.Migrations;
 using FirstWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ namespace FirstWeb.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")]
     public class HotelController : ControllerBase
     {
 

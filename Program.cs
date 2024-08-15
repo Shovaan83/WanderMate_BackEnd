@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
 using FirstWeb.Service;
 using Microsoft.OpenApi.Models;
+using FirstWeb.Models;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,7 +15,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddCors(options =>{
+builder.Services.AddCors(options =>
+{
     options.AddPolicy("AllowAllOrigin",
     builder =>
     {
@@ -24,6 +26,14 @@ builder.Services.AddCors(options =>{
     });
 });
 
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 // .AddJsonOptions(options =>
 // {
 //     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
@@ -32,6 +42,9 @@ builder.Services.AddCors(options =>{
 
 
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("Smtp"));
+builder.Services.AddSingleton<EmailService>();
 
 
 builder.Services.AddSingleton<TokenService>();
@@ -92,6 +105,8 @@ builder.Services.AddSwaggerGen(opt =>
 });
 
 var app = builder.Build();
+
+app.UseSession();
 
 
 app.MapControllers();

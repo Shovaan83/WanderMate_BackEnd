@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FirstWeb.context;
 using FirstWeb.Dtos.UserDTOs;
 using FirstWeb.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,7 @@ namespace FirstWeb.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
+    // [Authorize(Roles = "Admin")]
     public class AuthController : ControllerBase
     {
 
@@ -45,7 +47,12 @@ namespace FirstWeb.Controller
 
                 var token = _tokenService.GenerateToken(user);
 
-                return Ok(new{Message= "Login Successful", token=token});
+                HttpContext.Session.SetString("token", token);
+                HttpContext.Session.SetString("Id", user.Id.ToString());
+                HttpContext.Session.SetString("Username", user.Username);
+                HttpContext.Session.SetString("Role", user.Role);
+
+                return Ok(new { Message = "Login Successful", token = token });
             }
             catch (Exception ex)
             {
