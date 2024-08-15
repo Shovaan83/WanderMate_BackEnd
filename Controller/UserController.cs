@@ -36,9 +36,10 @@ namespace FirstWeb.Controller
             try
             {
                 var users = await _context.Users.ToListAsync();
-            
-                var getUserDto = users.Select(users => new GetUserDto{
-                    
+
+                var getUserDto = users.Select(users => new GetUserDto
+                {
+
                     Id = users.Id,
                     Username = users.Username,
                     Email = users.Email,
@@ -58,21 +59,22 @@ namespace FirstWeb.Controller
 
         public async Task<ActionResult<IEnumerable<User>>> Create([FromBody] UserDto userDto)
         {
-            try{
+            try
+            {
 
                 var DoesEmailExist = await _context.Users.SingleOrDefaultAsync(x => x.Email == userDto.Email);
-                if(DoesEmailExist != null)
+                if (DoesEmailExist != null)
                 {
                     return BadRequest("Email Already Exists");
                 }
 
-                var DoesUsernameExist = await  _context.Users.SingleOrDefaultAsync(x => x.Username == userDto.Username);
-                if(DoesUsernameExist != null)
+                var DoesUsernameExist = await _context.Users.SingleOrDefaultAsync(x => x.Username == userDto.Username);
+                if (DoesUsernameExist != null)
                 {
                     return BadRequest("Username Already Exists");
                 }
 
-                if(userDto.Password != userDto.ConfrimPassword)
+                if (userDto.Password != userDto.ConfrimPassword)
                 {
                     return BadRequest("Password does not match.");
                 }
@@ -100,7 +102,8 @@ namespace FirstWeb.Controller
 
         public async Task<ActionResult<IEnumerable<User>>> Delete(int id)
         {
-            try{
+            try
+            {
                 var user = await _context.Users.FindAsync(id);
                 if (user == null)
                 {
@@ -110,7 +113,7 @@ namespace FirstWeb.Controller
                 await _context.SaveChangesAsync();
                 return Ok("User Deleted Succesfully");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -118,19 +121,19 @@ namespace FirstWeb.Controller
 
         [HttpPut("{id}")]
 
-        public async Task<ActionResult<IEnumerable<User>>> Update (int id, [FromBody] UserDto userDto)
+        public async Task<ActionResult<IEnumerable<User>>> Update(int id, [FromBody] UserDto userDto)
 
         {
             try
             {
-                if(userDto == null)
+                if (userDto == null)
                 {
                     return NotFound();
                 }
 
                 var find_user = await _context.Users.FindAsync(id);
 
-                if(find_user == null)
+                if (find_user == null)
                 {
                     return NotFound();
                 }
@@ -143,23 +146,27 @@ namespace FirstWeb.Controller
                 await _context.SaveChangesAsync();
                 return Ok("User Updated Succesfully");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
 
-[HttpPost("forgot-password")]
-public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO model)
-{
-    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
-    if (user == null)
-        return BadRequest(new { message = "User not found." });
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO model)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
+            if (user == null)
+                return BadRequest(new { message = "User not found." });
 
-    var resetToken = Guid.NewGuid().ToString();
+            var resetToken = Guid.NewGuid().ToString();
 
-    var emailBody = $"This is your Reset Token: {resetToken}";
-    await _emailService.SendEmailAsync(user.Email, "Password Reset", emailBody);
+            // // Store the reset token with the user's information in a secure way (e.g., in a database)
+            _context.PasswordResets.Add(new PasswordReset { Token = resetToken });
+            await _context.SaveChangesAsync();
+
+            var emailBody = $"This is your Reset Token: {resetToken}";
+            await _emailService.SendEmailAsync(user.Email, "Password Reset", emailBody);
 
             // Construct reset URL
             // var resetLink = Url.Action("ResetPassword",
@@ -169,13 +176,11 @@ public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO mod
 
             // var emailBody = $"This is your Reset Token: {resetToken}";
 
-            // // Store the reset token with the user's information in a secure way (e.g., in a database)
-            // _context.PasswordResets.Add(new PasswordReset { Token = resetToken });
-            // await _context.SaveChangesAsync();
 
-             // Construct the email body
+
+            // Construct the email body
             // var emailBody = $"This is your Reset Token: {resetToken}";
-             // Send the email
+            // Send the email
             // await _emailService.SendEmailAsync(user.Username, "Password Reset", emailBody);
 
             // Send the reset link via email
@@ -183,6 +188,25 @@ public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO mod
             // await _emailService.SendEmailAsync(user.Username, "Password Reset", emailBody);
 
             return Ok(new { message = "If an account with that email exists, a password reset link has been sent." });
+        }
+
+        [HttpPost("UpdatePassword")]
+
+        public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordDTO model)
+        {
+            var token = await _context.PasswordResets.FirstOrDefaultAsync(p => p.Token  == model.Token);
+            if (token == null)
+                return BadRequest(new { message = "User not found." });
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
+            if (user == null)
+                return BadRequest(new { message = "User not found." });
+
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
+            user.Password = hashedPassword;
+            _context.PasswordResets.Remove(token);
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Password updated successfully." });
         }
 
 

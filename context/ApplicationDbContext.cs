@@ -30,6 +30,8 @@ namespace FirstWeb.context
 
         public DbSet<TopDestinations> TopDestination {get; set;}
 
+        public DbSet<PasswordReset> PasswordResets {get; set;}
+
         
 
         
