@@ -41,31 +41,34 @@ namespace FirstWeb.context
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Hotel>()
-                .HasMany(h => h.Reviews)
-                .WithOne(r => r.Hotel)
-                .HasForeignKey(r => r.HotelId);
+                        modelBuilder.Entity<Booking>()
+            .HasOne(b => b.User)
+            .WithMany(u => u.Bookings)
+            .HasForeignKey(b => b.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+ 
+            modelBuilder.Entity<Booking>()
+            .HasOne(b => b.Hotel)
+            .WithMany(h => h.Bookings)
+            .HasForeignKey(b => b.HotelId)
+            .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Review>()
-                .HasOne(r => r.Hotel)
-                .WithMany(h => h.Reviews)
-                .HasForeignKey(r => r.HotelId);
-            
+            .HasOne(r => r.User)
+            .WithMany(u => u.Reviews)
+            .HasForeignKey(r => r.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+
             modelBuilder.Entity<Review>()
-                .HasOne(r => r.User)
-                .WithMany(u => u.Reviews)
-                .HasForeignKey(r => r.UserId);
+            .HasOne(r => r.Hotel)
+            .WithMany(h => h.Reviews)
+            .HasForeignKey(r => r.HotelId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Booking>()
-                .HasOne(b => b.User)
-                .WithMany(u => u.Bookings)
-                .HasForeignKey(b => b.UserId);
-
-            modelBuilder.Entity<Booking>()
-                .HasOne(b => b.Hotel)
-                .WithMany(h => h.Bookings)
-                .HasForeignKey(b => b.HotelId);
-
+            modelBuilder.Entity<PasswordReset>()
+            .Property(pr => pr.Token)
+            .IsRequired(); // or any other configuration needed 
             // modelBuilder.Entity<TravelPackages>()
             //     .HasMany(t => t.Bookings)
             //     .WithOne(b => b.TravelPackages)

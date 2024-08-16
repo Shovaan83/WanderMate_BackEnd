@@ -74,10 +74,10 @@ namespace FirstWeb.Controller
                     return BadRequest("Username Already Exists");
                 }
 
-                if (userDto.Password != userDto.ConfrimPassword)
-                {
-                    return BadRequest("Password does not match.");
-                }
+                // if (userDto.Password != userDto.ConfrimPassword)
+                // {
+                //     return BadRequest("Password does not match.");
+                // }
 
                 var HashedPassword = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
 
@@ -141,7 +141,7 @@ namespace FirstWeb.Controller
                 find_user.Username = userDto.Username;
                 find_user.Email = userDto.Email;
                 find_user.Password = userDto.Password;
-                find_user.ConfrimPassword = userDto.ConfrimPassword;
+                // find_user.ConfrimPassword = userDto.ConfrimPassword;
 
                 await _context.SaveChangesAsync();
                 return Ok("User Updated Succesfully");

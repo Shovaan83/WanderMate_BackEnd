@@ -21,7 +21,7 @@ namespace FirstWeb.Models
         public int? HotelId {get; set;}
         public Hotel? Hotel {get; set;}
 
-        public ICollection<TravelPackages> TravelPackages {get; set;} = new List<TravelPackages>();
+        // public ICollection<TravelPackages> TravelPackages {get; set;} = new List<TravelPackages>();
 
         public ICollection<User> Users {get; set;} = new List<User>();
 

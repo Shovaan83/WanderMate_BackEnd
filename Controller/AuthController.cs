@@ -47,12 +47,18 @@ namespace FirstWeb.Controller
 
                 var token = _tokenService.GenerateToken(user);
 
-                HttpContext.Session.SetString("token", token);
-                HttpContext.Session.SetString("Id", user.Id.ToString());
-                HttpContext.Session.SetString("Username", user.Username);
-                HttpContext.Session.SetString("Role", user.Role);
+                var response = new{
+                    Token = token,
+                    Role = user.Role,
+                    ExpiresIn = DateTime.Now.AddMinutes(30),
+                };
 
-                return Ok(new { Message = "Login Successful", token = token });
+                // HttpContext.Session.SetString("token", token);
+                // HttpContext.Session.SetString("Id", user.Id.ToString());
+                // HttpContext.Session.SetString("Username", user.Username);
+                // HttpContext.Session.SetString("Role", user.Role);
+
+                return Ok(new { Message = "Login Successful", response});
             }
             catch (Exception ex)
             {

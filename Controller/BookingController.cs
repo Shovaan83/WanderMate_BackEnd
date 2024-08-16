@@ -28,7 +28,7 @@ namespace FirstWeb.Controller
             {
                 var bookings = await _context.Bookings
                 .Include(b => b.User)
-                // .Include(b => b.Hotel)
+                .Include(b => b.Hotel)
                 .ToListAsync();
                 return Ok(bookings);
             }

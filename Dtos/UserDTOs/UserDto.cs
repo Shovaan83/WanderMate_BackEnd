@@ -15,6 +15,6 @@ namespace FirstWeb.Dtos
 
         public string? Password {get; set;}
 
-        public string? ConfrimPassword {get; set;}
+        // public string? ConfrimPassword {get; set;}
     }
 }
