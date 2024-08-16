@@ -58,7 +58,7 @@ namespace FirstWeb.Controller
                 // HttpContext.Session.SetString("Username", user.Username);
                 // HttpContext.Session.SetString("Role", user.Role);
 
-                return Ok(new { Message = "Login Successful", response});
+                return Ok(new {  response});
             }
             catch (Exception ex)
             {
